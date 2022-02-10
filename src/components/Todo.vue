@@ -97,8 +97,6 @@ export default {
 			per_page: 10,
 			total: 0,
 			loading: false,
-			hasPrev: false,
-			hasNext: false,
 		};
 	},
 	components: {
@@ -116,8 +114,6 @@ export default {
 						this.page * this.per_page
 					);
 					this.total = response.data.length;
-					this.hasPrev = this.page > 1;
-					this.hasNext = this.page * this.per_page < this.total;
 
 					this.loading = false;
 				})
