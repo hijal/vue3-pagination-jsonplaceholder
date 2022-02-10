@@ -1,7 +1,6 @@
 <template>
-	<div class="container">todo list</div>
-
-	<div class="card">
+	<Preloader v-show="loading" />
+	<div class="card" v-show="!loading">
 		<div class="card-body">
 			<div class="table-responsive">
 				<table class="table">
@@ -56,6 +55,7 @@
 										<div class="col-md-6 col-sm-4">
 											<button
 												class="btn btn-sm p-0 shadow-none"
+												:class="{ disabled: page === 1 }"
 												@click="prevPage"
 											>
 												<i class="fas fa-angle-left"></i>
@@ -64,6 +64,9 @@
 										<div class="col-md-6 col-sm-4">
 											<button
 												class="btn btn-sm p-0 shadow-none"
+												:class="{
+													disabled: page === Math.ceil(total / per_page),
+												}"
 												@click="nextPage"
 											>
 												<i class="fas fa-angle-right"></i>
@@ -83,6 +86,8 @@
 <script>
 import axios from 'axios';
 
+import Preloader from './Preloader.vue';
+
 export default {
 	name: 'Todo',
 	data() {
@@ -92,7 +97,12 @@ export default {
 			per_page: 10,
 			total: 0,
 			loading: false,
+			hasPrev: false,
+			hasNext: false,
 		};
+	},
+	components: {
+		Preloader,
 	},
 	methods: {
 		fetchTodos() {
@@ -106,6 +116,9 @@ export default {
 						this.page * this.per_page
 					);
 					this.total = response.data.length;
+					this.hasPrev = this.page > 1;
+					this.hasNext = this.page * this.per_page < this.total;
+
 					this.loading = false;
 				})
 				.catch((error) => {
